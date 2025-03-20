@@ -17,13 +17,20 @@
     width: 120px;
     height: 120px;
     margin: 20px auto;
+    position: relative;
   }
   .coin img {
     width: 100%;
-    display: none; 
-    transition: transform 0.6s ease-in-out;
+    position: absolute;
+    backface-visibility: hidden;
   }
-  .flip {
+  .heads {
+    transform: rotateY(0deg);
+  }
+  .tails {
+    transform: rotateY(180deg);
+  }
+  .flip-animation {
     animation: flipAnimation 0.6s linear;
   }
   @keyframes flipAnimation {
@@ -42,7 +49,8 @@
   <button onclick="resetCounts()">Обнулити</button>
   
   <div class="coin">
-    <img id="coinImage" alt="Монетка">
+    <img id="headsImage" class="heads" src="ukraine-5-hryvnias-2019 (1).jpg" alt="Орел" style="display:none;">
+    <img id="tailsImage" class="tails" src="ukraine-5-hryvnias-2019.jpg" alt="Решка" style="display:none;">
   </div>
 
   <p>Загальна кількість підкидань: <span id="count">0</span></p>
@@ -54,39 +62,35 @@
   let count = 0;
   let heads = 0;
   let tails = 0;
-  let coinImage = document.getElementById('coinImage');
 
   function flipCoin() {
     let numFlips = parseInt(document.getElementById('numFlips').value) || 1;
+    let headsImage = document.getElementById('headsImage');
+    let tailsImage = document.getElementById('tailsImage');
 
     for (let i = 0; i < numFlips; i++) {
       let random = Math.floor(Math.random() * 2);
       
-      // Додаємо анімацію перевороту
-      coinImage.classList.add('flip');
+      headsImage.style.display = "none";
+      tailsImage.style.display = "none";
 
+      if (random === 0) {
+        heads++;
+        headsImage.style.display = "block";
+        headsImage.classList.add('flip-animation');
+      } else {
+        tails++;
+        tailsImage.style.display = "block";
+        tailsImage.classList.add('flip-animation');
+      }
+      
+      count++;
+      updateDisplay();
+      
       setTimeout(() => {
-        if (random === 0) {
-          heads++;
-          coinImage.src = "ukraine-5-hryvnias-2019 (1).jpg"; 
-          coinImage.alt = "Орел";
-        } else {
-          tails++;
-          coinImage.src = "ukraine-5-hryvnias-2019.jpg"; 
-          coinImage.alt = "Решка";
-        }
-
-        coinImage.style.display = "block"; 
-
-   
-        count++;
-        updateDisplay();
-
-
-        setTimeout(() => {
-          coinImage.classList.remove('flip');
-        }, 600);
-      }, 300);
+        headsImage.classList.remove('flip-animation');
+        tailsImage.classList.remove('flip-animation');
+      }, 600);
     }
   }
 
@@ -102,8 +106,6 @@
     document.getElementById('heads').textContent = heads;
     document.getElementById('tails').textContent = tails;
   }
-
-  
 </script>
 </body>
 </html>
